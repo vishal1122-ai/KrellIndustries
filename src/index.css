@@ -1,0 +1,35 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom font and layout base adjustments */
+body {
+  @apply bg-[#0a0a0a] text-[#d3d3d3] font-sans;
+}
+
+input::placeholder {
+  @apply text-gray-400;
+}
+
+/* Button Styles */
+.btn-primary {
+  @apply bg-transparent border border-[#888888] text-white font-medium rounded-md py-2 px-4 transition-all duration-200 hover:bg-white hover:text-black;
+}
+
+.btn-google {
+  @apply bg-white text-black font-semibold rounded-md py-2 px-4 transition-all duration-200 hover:bg-gray-200;
+}
+
+@keyframes zoomSlow {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+.animate-zoom-slow {
+  animation: zoomSlow 10s ease-in-out infinite;
+}
