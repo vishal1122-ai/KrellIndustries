@@ -1,9 +1,16 @@
 import { useEffect, useState } from "react";
 import { useQuotes } from "./QuoteContext";
 
+interface Product {
+  id: number;
+  title: string;
+  description: string;
+  thumbnail: string;
+}
+
 const Catalog = () => {
-  const [products, setProducts] = useState([]);
-  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [quantity, setQuantity] = useState(1);
   const [message, setMessage] = useState("");
@@ -81,8 +88,8 @@ const Catalog = () => {
               <button
                 onClick={() => {
                   addRequest({
-                    product: selectedProduct.title,
-                    image: selectedProduct.thumbnail,
+                    title: selectedProduct.title,
+                    thumbnail: selectedProduct.thumbnail,
                     quantity,
                     message,
                   });

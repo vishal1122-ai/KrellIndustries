@@ -1,24 +1,42 @@
-import { createContext, useContext, useState } from "react";
+import { ReactNode, createContext, useContext, useState } from "react";
 import { db } from "./firebase";
 import { collection, addDoc } from "firebase/firestore";
 
-export const QuoteContext = createContext<any>(null);
+// Define the structure of a Quote request
+export interface Quote {
+  id: number;
+  title: string;
+  thumbnail: string;
+  quantity: number;
+  message: string;
+  status: string;
+  submittedAt: string;
+}
 
-export const QuoteProvider = ({ children }) => {
-  const [requests, setRequests] = useState([]);
+interface QuoteContextType {
+  requests: Quote[];
+  addRequest: (request: Omit<Quote, "id" | "status" | "submittedAt">) => void;
+}
 
-  const addRequest = async (request) => {
-    const newRequest = {
+// Create the context
+export const QuoteContext = createContext<QuoteContextType | null>(null);
+
+// Provider component
+export const QuoteProvider = ({ children }: { children: ReactNode }) => {
+  const [requests, setRequests] = useState<Quote[]>([]);
+
+  const addRequest = async (
+    request: Omit<Quote, "id" | "status" | "submittedAt">
+  ) => {
+    const newRequest: Quote = {
       ...request,
       id: Date.now(),
       status: "Pending",
       submittedAt: new Date().toLocaleString(),
     };
 
-    // Add to local state
     setRequests((prev) => [...prev, newRequest]);
 
-    // Save to Firestore
     try {
       await addDoc(collection(db, "dealerRequests"), newRequest);
       console.log("Request saved to Firestore ✅");
@@ -34,4 +52,10 @@ export const QuoteProvider = ({ children }) => {
   );
 };
 
-export const useQuotes = () => useContext(QuoteContext);
+// Hook to use the context
+export const useQuotes = () => {
+  const context = useContext(QuoteContext);
+  if (!context)
+    throw new Error("useQuotes must be used within a QuoteProvider");
+  return context;
+};

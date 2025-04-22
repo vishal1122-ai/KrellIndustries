@@ -1,10 +1,9 @@
-import { useState } from 'react'
-
-function App() {
-  
+const App = () => {
   return (
-    <h1>You're currently logged in.</h1>
-  )
-}
+    <div className="p-6 text-white text-2xl font-semibold">
+      You&apos;re currently logged in.
+    </div>
+  );
+};
 
-export default App
+export default App;
