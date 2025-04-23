@@ -12,10 +12,10 @@ const Profile = () => {
     <div className="max-w-xl mx-auto p-6 text-white">
       <h1 className="text-3xl font-bold mb-6">My Profile</h1>
 
-      <div className="bg-[#1a1a1a] p-6 rounded shadow-md">
+      <div className="bg-[#1a1a1a] p-6 rounded shadow-md overflow-x-auto">
         {/* Profile Picture */}
         {user.photoURL && (
-          <div className="mb-4">
+          <div className="mb-4 flex justify-center">
             <img
               src={user.photoURL}
               alt="Profile"
@@ -24,15 +24,18 @@ const Profile = () => {
           </div>
         )}
 
-        <div className="space-y-2 text-gray-300">
+        <div className="space-y-2 text-gray-300 break-words">
           <p>
-            <strong>👤 Name:</strong> {user.displayName || "N/A"}
+            <strong>👤 Name:</strong>{" "}
+            <span className="break-all">{user.displayName || "N/A"}</span>
           </p>
           <p>
-            <strong>📧 Email:</strong> {user.email || "N/A"}
+            <strong>📧 Email:</strong>{" "}
+            <span className="break-all">{user.email || "N/A"}</span>
           </p>
           <p>
-            <strong>🆔 UID:</strong> {user.uid}
+            <strong>🆔 UID:</strong>{" "}
+            <span className="break-all">{user.uid}</span>
           </p>
           <p>
             <strong>📅 Joined:</strong> {user.metadata?.creationTime || "N/A"}

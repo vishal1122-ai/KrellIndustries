@@ -22,24 +22,19 @@ const Signup = () => {
   const [error, setError] = useState("");
 
   const signUpWithGoogle = async () => {
-    try {
-      setAuthing(true);
-      const response = await signInWithPopup(auth, new GoogleAuthProvider());
-      const user = response.user;
-
-      if (firstName || lastName) {
+    setAuthing(true);
+    signInWithPopup(auth, new GoogleAuthProvider())
+      .then(async (response) => {
+        const user = response.user;
         await updateProfile(user, {
           displayName: `${firstName} ${lastName}`,
         });
-      }
-
-      navigate("/dashboard/home");
-    } catch (err: any) {
-      console.error(err);
-      setError(err.message);
-    } finally {
-      setAuthing(false);
-    }
+        navigate("/dashboard/home");
+      })
+      .catch((error) => {
+        console.log(error);
+        setAuthing(false);
+      });
   };
 
   const signUpWithEmail = async () => {
@@ -48,83 +43,84 @@ const Signup = () => {
       return;
     }
 
-    try {
-      setAuthing(true);
-      setError("");
+    setAuthing(true);
+    setError("");
 
-      const response = await createUserWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
-
-      await updateProfile(response.user, {
-        displayName: `${firstName} ${lastName}`,
+    createUserWithEmailAndPassword(auth, email, password)
+      .then(async (response) => {
+        const user = response.user;
+        await updateProfile(user, {
+          displayName: `${firstName} ${lastName}`,
+        });
+        navigate("/dashboard/home");
+      })
+      .catch((error) => {
+        console.log(error);
+        setError(error.message);
+        setAuthing(false);
       });
-
-      navigate("/dashboard/home");
-    } catch (err: any) {
-      console.error(err);
-      setError(err.message);
-    } finally {
-      setAuthing(false);
-    }
   };
 
   return (
-    <div className="w-full h-screen flex">
-      {/* Left background */}
-      <div className="w-1/2 h-full flex flex-col bg-gradient-to-br from-[#0a0a0a] to-[#1a1a1a] items-center justify-center">
+    <div className="w-full min-h-screen flex lg:flex-row flex-col">
+      {/* Mobile background logo */}
+      <img
+        src={krellLogo}
+        alt="Krell Logo"
+        className="absolute object-contain opacity-10 w-1/2 h-full lg:hidden lg:flex"
+      />
+
+      {/* Left Panel for desktop */}
+      <div className="lg:w-1/2 hidden lg:flex items-center justify-center bg-gradient-to-br from-[#0a0a0a] to-[#1a1a1a]">
         <img
           src={krellLogo}
           alt="Krell Logo"
-          className="absolute left-0 top-0 transform -translate-x-1/2 -translate-y-1/2 max-w-[100%] max-h-[80%] opacity-10 animate-zoom-slow"
+          className="w-[60%] opacity-10 object-contain"
         />
       </div>
 
-      {/* Right form */}
-      <div className="w-1/2 h-full bg-[#1a1a1a] flex flex-col p-20 justify-center">
-        <div className="w-full flex flex-col max-w-[450px] mx-auto">
-          <div className="w-full flex flex-col mb-10 text-white">
-            <h3 className="text-4xl font-bold mb-2">Sign Up</h3>
-            <p className="text-lg mb-4">
-              Welcome! Please enter your information below to begin.
-            </p>
-          </div>
+      {/* Signup Form */}
+      <div className="lg:w-1/2 w-full bg-[#1a1a1a] relative z-10 flex items-center justify-center px-6 py-12">
+        <div className="w-full max-w-md text-white">
+          <h3 className="text-4xl font-bold mb-4">Sign Up</h3>
+          <p className="text-lg mb-6">
+            Welcome! Enter your details to continue.
+          </p>
 
-          <div className="w-full flex flex-col mb-6">
+          {/* Input Fields */}
+          <div className="space-y-4 mb-4">
             <input
               type="text"
               placeholder="First Name"
-              className="w-full text-white py-2 mb-4 bg-transparent border-b border-gray-500 focus:outline-none focus:border-white"
+              className="w-full text-white py-2 bg-transparent border-b border-[#5c5c5c] focus:border-white focus:outline-none"
               value={firstName}
               onChange={(e) => setFirstName(e.target.value)}
             />
             <input
               type="text"
               placeholder="Last Name"
-              className="w-full text-white py-2 mb-4 bg-transparent border-b border-gray-500 focus:outline-none focus:border-white"
+              className="w-full text-white py-2 bg-transparent border-b border-[#5c5c5c] focus:border-white focus:outline-none"
               value={lastName}
               onChange={(e) => setLastName(e.target.value)}
             />
             <input
               type="email"
               placeholder="Email"
-              className="w-full text-white py-2 mb-4 bg-transparent border-b border-gray-500 focus:outline-none focus:border-white"
+              className="w-full text-white py-2 bg-transparent border-b border-[#5c5c5c] focus:border-white focus:outline-none"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
             <input
               type="password"
               placeholder="Password"
-              className="w-full text-white py-2 mb-4 bg-transparent border-b border-gray-500 focus:outline-none focus:border-white"
+              className="w-full text-white py-2 bg-transparent border-b border-[#5c5c5c] focus:border-white focus:outline-none"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
             <input
               type="password"
               placeholder="Re-Enter Password"
-              className="w-full text-white py-2 mb-4 bg-transparent border-b border-gray-500 focus:outline-none focus:border-white"
+              className="w-full text-white py-2 bg-transparent border-b border-[#5c5c5c] focus:border-white focus:outline-none"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
             />
@@ -132,16 +128,16 @@ const Signup = () => {
 
           {error && <div className="text-red-500 mb-4">{error}</div>}
 
-          <div className="w-full flex flex-col mb-4">
-            <button
-              onClick={signUpWithEmail}
-              disabled={authing}
-              className="btn-primary w-full my-2 flex items-center justify-center"
-            >
-              Sign Up With Email and Password
-            </button>
-          </div>
+          {/* Signup Button */}
+          <button
+            onClick={signUpWithEmail}
+            disabled={authing}
+            className="btn-primary w-full my-2 flex items-center justify-center"
+          >
+            Sign Up With Email and Password
+          </button>
 
+          {/* OR Divider */}
           <div className="w-full flex items-center justify-center relative py-4">
             <div className="w-full h-[1px] bg-gray-500"></div>
             <p className="text-lg absolute text-gray-500 bg-[#1a1a1a] px-2">
@@ -149,19 +145,19 @@ const Signup = () => {
             </p>
           </div>
 
+          {/* Google Signup */}
           <button
             onClick={signUpWithGoogle}
             disabled={authing}
-            className="btn-google w-full mt-7 flex items-center justify-center"
+            className="btn-google w-full mt-4 flex items-center justify-center"
           >
             Sign Up With Google
           </button>
-        </div>
 
-        <div className="w-full flex items-center justify-center mt-10">
-          <p className="text-sm font-normal text-gray-400">
+          {/* Link to Login */}
+          <p className="text-sm text-gray-400 text-center mt-8">
             Already have an account?{" "}
-            <span className="font-semibold text-white cursor-pointer underline">
+            <span className="font-semibold text-white underline">
               <a href="/login">Log In</a>
             </span>
           </p>

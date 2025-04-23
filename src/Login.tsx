@@ -18,82 +18,81 @@ const Login = () => {
   const [error, setError] = useState("");
 
   const signInWithGoogle = async () => {
-    try {
-      setAuthing(true);
-      const response = await signInWithPopup(auth, new GoogleAuthProvider());
-      console.log(response.user.uid);
-      navigate("/dashboard/home");
-    } catch (err: any) {
-      console.error(err);
-      setError(err.message);
-    } finally {
-      setAuthing(false);
-    }
+    setAuthing(true);
+    signInWithPopup(auth, new GoogleAuthProvider())
+      .then(() => navigate("/dashboard/home"))
+      .catch((error) => {
+        console.log(error);
+        setAuthing(false);
+      });
   };
 
   const signInWithEmail = async () => {
-    try {
-      setAuthing(true);
-      setError("");
-      const response = await signInWithEmailAndPassword(auth, email, password);
-      console.log(response.user.uid);
-      navigate("/dashboard/home");
-    } catch (err: any) {
-      console.error(err);
-      setError(err.message);
-    } finally {
-      setAuthing(false);
-    }
+    setAuthing(true);
+    setError("");
+
+    signInWithEmailAndPassword(auth, email, password)
+      .then(() => navigate("/dashboard/home"))
+      .catch((error) => {
+        console.log(error);
+        setError(error.message);
+        setAuthing(false);
+      });
   };
 
   return (
-    <div className="w-full h-screen flex">
-      {/* Left background styling */}
-      <div className="w-1/2 h-full flex flex-col bg-gradient-to-br from-[#0a0a0a] to-[#1a1a1a] items-center justify-center">
+    <div className=" w-full min-h-screen flex lg:flex-row flex-col">
+      {/* Background Logo for Mobile */}
+      <img
+        src={krellLogo}
+        alt="Krell Logo"
+        className="absolute object-contain opacity-10 w-1/2 h-full lg:hidden lg:flex"
+      />
+
+      {/* Left Panel (Desktop Only) */}
+      <div className="lg:w-1/2 hidden lg:flex items-center justify-center bg-gradient-to-br from-[#0a0a0a] to-[#1a1a1a]">
         <img
           src={krellLogo}
           alt="Krell Logo"
-          className="absolute left 0 top 0 transform -translate-x-1/2 -translate-y-1/2 max-w-[100%] max-h-[80%] opacity-10 animate-zoom-slow"
+          className="w-[60%] opacity-10 object-contain"
         />
       </div>
 
-      {/* Right form section */}
-      <div className="w-1/2 h-full bg-[#0a0a0a] flex flex-col p-20 justify-center">
-        <div className="w-full flex flex-col max-w-[450px] mx-auto">
-          <div className="w-full flex flex-col mb-10 text-white">
-            <h3 className="text-4xl font-bold mb-2">Login</h3>
-            <p className="text-lg mb-4">Welcome! Please enter your details.</p>
-          </div>
+      {/* Right/Form Section */}
+      <div className="lg:w-1/2 w-full bg-[#0a0a0a] relative z-10 flex items-center justify-center px-6 py-12">
+        <div className="w-full max-w-md text-white">
+          <h3 className="text-4xl font-bold mb-4">Login</h3>
+          <p className="text-lg mb-6">Welcome! Please enter your details.</p>
 
-          <div className="w-full flex flex-col mb-6">
+          {/* Input Fields */}
+          <div className="space-y-4 mb-4">
             <input
               type="email"
               placeholder="Email"
-              className="w-full text-white py-2 mb-4 bg-transparent border-b border-[#5c5c5c] focus:outline-none focus:border-white"
+              className="w-full text-white py-2 bg-transparent border-b border-[#5c5c5c] focus:border-white focus:outline-none"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
             <input
               type="password"
               placeholder="Password"
-              className="w-full text-white py-2 mb-4 bg-transparent border-b border-[#5c5c5c] focus:outline-none focus:border-white"
+              className="w-full text-white py-2 bg-transparent border-b border-[#5c5c5c] focus:border-white focus:outline-none"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
           </div>
 
-          <div className="w-full flex flex-col mb-4">
-            <button
-              onClick={signInWithEmail}
-              disabled={authing}
-              className="btn-primary w-full my-2 flex items-center justify-center"
-            >
-              Log In With Email and Password
-            </button>
-          </div>
-
           {error && <div className="text-red-500 mb-4">{error}</div>}
 
+          <button
+            className="btn-primary w-full my-2 flex items-center justify-center"
+            onClick={signInWithEmail}
+            disabled={authing}
+          >
+            Log In With Email and Password
+          </button>
+
+          {/* OR Divider */}
           <div className="w-full flex items-center justify-center relative py-4">
             <div className="w-full h-[1px] bg-gray-500"></div>
             <p className="text-lg absolute text-gray-500 bg-[#0a0a0a] px-2">
@@ -101,19 +100,19 @@ const Login = () => {
             </p>
           </div>
 
+          {/* Google Login */}
           <button
+            className="btn-google w-full mt-4 flex items-center justify-center"
             onClick={signInWithGoogle}
             disabled={authing}
-            className="btn-google w-full mt-7 flex items-center justify-center"
           >
             Log In With Google
           </button>
-        </div>
 
-        <div className="w-full flex items-center justify-center mt-10">
-          <p className="text-sm font-normal text-gray-400">
-            Don't have an account?{" "}
-            <span className="font-semibold text-white cursor-pointer underline">
+          {/* Link to Signup */}
+          <p className="text-sm text-gray-400 text-center mt-8">
+            Don&apos;t have an account?{" "}
+            <span className="font-semibold text-white underline">
               <a href="/signup">Sign Up</a>
             </span>
           </p>
